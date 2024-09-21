@@ -22,19 +22,10 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(__dirname + '/public'))
 app.use(cookieParser())
 
-app.use(session({
-    store: MongoStore.create({
-        mongoUrl: 'mongodb+srv://joey2596:6Gsb0szOnn5mCODC@cluster0.lsakre9.mongodb.net/backEndII?retryWrites=true&w=majority&appName=Cluster0',
-        ttl: 15,
-    }),
-    secret: 'abc123',
-    resave: false,
-    saveUninitialized: false
-}))
+
 
 initializePassport()
 app.use(passport.initialize())
-app.use(passport.session())
 
 app.use('/', viewsRouter)
 app.use('/', sessionsRouter)

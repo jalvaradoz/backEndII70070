@@ -1,16 +1,19 @@
 import passport from "passport"
+import local from 'passport-local'
 import userModel from "../models/user.model.js"
 import { createHash, isValidPassword } from "../utils.js"
 import jwt from 'jsonwebtoken'
+import passportJwt from 'passport-jwt'
 
-const JWTStrategy = jwt.Strategy
-const extractJWT = jwt.ExtractJWT
+
+const localStrategy = local.Strategy
+const JWTStrategy = passportJwt.Strategy
+const extractJwt = passportJwt.ExtractJwt
 
 const cookieExtractor = (req) => {
     let token = null
-    console.log(req.headers)
-    if (req && req.headers) {
-        token = req.headers.authorization.split(' ')[1]
+    if (req && req.cookies) {
+        token = req.cookies['jwt']
     }
     return token
 }
@@ -18,13 +21,15 @@ const cookieExtractor = (req) => {
 const initializePassport = () => {
 
     passport.use('jwt', new JWTStrategy({
-        jwtFromRequest: extractJWT.fromExtractors([cookieExtractor]),
-        secretOrKey: 'coderSecret'
+        jwtFromRequest: extractJwt.fromExtractors([cookieExtractor]),
+        secretOrKey: 'CoderSecret'
     }, async (jwt_payload, done) => {
         try {
-            return done(null, jwt_payload)
+            const user = await userModel.findById(jwt_payload.user._id)
+            if (!user) return done(null, false)
+            return done(null, user)
         } catch (error) {
-            return done(error)
+            return done(error, false)
         }
     }))
 
@@ -45,7 +50,8 @@ const initializePassport = () => {
                 lastName,
                 email,
                 age,
-                password: createHash(password)
+                password: createHash(password),
+                role: 'user'
             }
 
             let result = await userModel.create(newUser)
@@ -56,28 +62,22 @@ const initializePassport = () => {
     }
     ))
 
-    passport.serializeUser((user, done) => {
-        done(null, user._id)
-    })
-
-    passport.deserializeUser(async (id, done) => {
-        let user = await userModel.findById(id)
-        done(null, user)
-    })
-
-    passport.use('login', new localStrategy({ usernameField: 'email' }, async (username, password, done) => {
+    passport.use('login', new localStrategy({ usernameField: 'email' }, async (email, password, done) => {
         try {
-            const user = await userModel.findOne({ email: username })
+            const user = await userModel.findOne({ email });
             if (!user) {
-                console.log('user does not exist')
-                return done(null, false)
+                return done(null, false, { message: 'User not found' })
             }
-            if (!isValidPassword(password, user.password)) return done(null, false)
-            return done(null, user)
+            if (!isValidPassword(password, user.password)) {
+                return done(null, false, { message: 'Incorrect password' })
+            }
+
+            const token = jwt.sign({ user }, 'CoderSecret', { expiresIn: '24h' })
+            return done(null, { user, token })
         } catch (error) {
             return done(error)
         }
-    }))
+    }));
 }
 
 export default initializePassport

@@ -1,18 +1,16 @@
 import { Router } from "express"
+import passport from "passport"
 
 const viewsRouter = Router()
 
-viewsRouter.get('/profile', async (req, res) => {
+viewsRouter.get('/profile', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
-        if (!req.session.user) {
-            return res.redirect('/login')
-        }
+        const { firstName, lastName, email, age } = req.user
 
-        const { firstName, lastName, email, age } = req.session.user;
-        res.render('profile', { firstName, lastName, email, age });
+        res.render('profile', { firstName, lastName, email, age })
     } catch (error) {
-        console.error(error);
-        res.status(500).send('internal server error');
+        console.error(error)
+        res.status(500).send('internal server error')
     }
 })
 
