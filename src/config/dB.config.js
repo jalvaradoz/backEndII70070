@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-mongoose.connect('mongodb+srv://joey2596:6Gsb0szOnn5mCODC@cluster0.lsakre9.mongodb.net/backEndII?retryWrites=true&w=majority&appName=Cluster0')
+mongoose.connect(process.env.MONGO_URL)
 
 const connectDB = mongoose.connection
 

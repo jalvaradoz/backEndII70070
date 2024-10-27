@@ -1,11 +1,10 @@
 import express from 'express'
 import { engine } from 'express-handlebars'
 import cookieParser from 'cookie-parser'
-import session from 'express-session'
 import viewsRouter from './routes/views.router.js'
 import sessionsRouter from './routes/sessions.router.js'
+import usersRouter from './routes/users.router.js'
 import __dirname from './utils.js'
-import MongoStore from 'connect-mongo'
 import passport from 'passport'
 import initializePassport from './config/passport.config.js'
 import './config/dB.config.js'
@@ -23,12 +22,12 @@ app.use(express.static(__dirname + '/public'))
 app.use(cookieParser())
 
 
-
 initializePassport()
 app.use(passport.initialize())
 
 app.use('/', viewsRouter)
 app.use('/', sessionsRouter)
+app.use('/', usersRouter)
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
