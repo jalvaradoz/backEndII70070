@@ -4,6 +4,9 @@ import cookieParser from 'cookie-parser'
 import viewsRouter from './routes/views.router.js'
 import sessionsRouter from './routes/sessions.router.js'
 import usersRouter from './routes/users.router.js'
+import emailsRouter from './routes/emails.router.js'
+import productRouter from './routes/product.router.js'
+import cartRouter from './routes/cart.router.js'
 import __dirname from './utils.js'
 import passport from 'passport'
 import initializePassport from './config/passport.config.js'
@@ -28,6 +31,9 @@ app.use(passport.initialize())
 app.use('/', viewsRouter)
 app.use('/', sessionsRouter)
 app.use('/', usersRouter)
+app.use('/', emailsRouter)
+app.use('/', productRouter)
+app.use('/', cartRouter)
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 

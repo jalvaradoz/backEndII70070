@@ -1,20 +1,27 @@
 import userModel from "../models/user.model.js"
 
-export default class User {
-    getUsers = async () => {
+export default class UserDAO {
+    async getUsers() {
         try {
-            let users = await userModel.find()
-            return users
+            return await userModel.find()
         } catch (error) {
             console.log(error)
             return null
         }
     }
 
-    getUserById = async (id) => {
+    async getUserById(id) {
         try {
-            let user = await userModel.findOne({ _id: id })
-            return user
+            return await userModel.findById(id)
+        } catch (error) {
+            console.log(error)
+            return null
+        }
+    }
+
+    async saveUser(id, userData) {
+        try {
+            return await userModel.findByIdAndUpdate(id, userData, { new: true })
         } catch (error) {
             console.log(error)
             return null

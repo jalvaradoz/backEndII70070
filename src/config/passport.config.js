@@ -77,7 +77,7 @@ const initializePassport = () => {
         } catch (error) {
             return done(error)
         }
-    }));
+    }))
 }
 
 export default initializePassport
