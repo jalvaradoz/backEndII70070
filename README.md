@@ -4,6 +4,9 @@
 
 ## Description
 
+A backend API project focusing on product and cart management, designed with RESTful architecture and utilizing Node.js, Express, and MongoDB. This API enables CRUD operations for products and carts and includes user authentication with JWT and Passport.
+It also includes designated roles for users so they can perform certain actions depending if they are "user" or "admin". At the end of a purchase, a confirmation email is sent to the user using a mail service
+
 ## Table of contents
 
 1. Installation
@@ -23,7 +26,7 @@
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/jalvaradoz/
+git clone https://github.com/jalvaradoz/backEndII70070.git
 ```
 
 2. Navigate to the project directory:
@@ -36,6 +39,13 @@ cd backend-project
 
 ```bash
 npm install
+```
+
+4. Set up environment variables in a .env file if needed (e.g., MongoDB connection URL, JWT secret):
+
+```bash
+MONGO_URL=<your-mongodb-url>
+JWT_SECRET=<your-jwt-secret>
 ```
 
 ## Usage
@@ -55,37 +65,13 @@ npm start
 - Get all products
 
 ```bash
-GET /api/products
-```
-
-- Query parameters:
-
-  - limit (optional): Number of products per page (default: 10).
-  - page (optional): Page number to retrieve (default: 1).
-  - sort (optional): Sort by price, either asc or desc.
-  - query (optional): Filter by category or stock availability.
-
-  -Example response format:
-
-```json
-{
-    "status": "success",
-    "payload": [...],
-    "totalPages": 5,
-    "prevPage": 1,
-    "nextPage": 3,
-    "page": 2,
-    "hasPrevPage": true,
-    "hasNextPage": true,
-    "prevLink": "/?page=1&limit=10",
-    "nextLink": "/?page=3&limit=10"
-}
+GET /products
 ```
 
 - Delete a product by ID
 
 ```bash
-DELETE /products/:id
+DELETE /products/delete/:pid
 ```
 
 - Path parameters:
@@ -95,45 +81,51 @@ DELETE /products/:id
 - POST a new product
 
 ```bash
-POST /products
+POST /newProduct
 ```
 
 - Update an existing product by ID
 
 ```bash
-PUT /products/:id
+PUT /products/update/:pid
 ```
 
 - Carts
 
-* Update an existing product by ID
+* GET cart by ID
 
 ```bash
-GET /cart/:cid
+GET /carts/:cid
 ```
 
-- Add products to a cart or update the cart with a new product array
+- Create a cart
 
 ```bash
-PUT /cart/:cid
+POST /carts
 ```
 
-- Update the quantity of a specific product in the cart
+- Add products to a cart
 
 ```bash
-PUT /cart/products/:pid
+POST /carts/:cid/products/:pid
+```
+
+- Delete cart on the DB
+
+```bash
+DELETE /carts/:cid
 ```
 
 - Remove a product from the cart by ID
 
 ```bash
-DELETE /cart/products/:pid
+DELETE /carts/:cid/products/:pid
 ```
 
-- Clear all products from a cart
+- Purchase the Cart
 
 ```bash
-DELETE /cart/:cid
+POST /carts/:cid/purchase
 ```
 
 ## Technologies
